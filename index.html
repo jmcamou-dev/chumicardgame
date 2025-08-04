@@ -123,6 +123,47 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .current-turn-display {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .turn-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .turn-player {
+            font-size: 14px;
+            color: #ffd700;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .turn-player.my-turn {
+            color: #10ff88;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(16, 255, 136, 0.7);
+            animation: myTurnPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes myTurnPulse {
+            0%, 100% { 
+                text-shadow: 0 0 15px rgba(16, 255, 136, 0.7);
+            }
+            50% { 
+                text-shadow: 0 0 25px rgba(16, 255, 136, 0.9);
+            }
+        }
+
         .main-content {
             flex: 1;
             overflow-y: auto;
@@ -246,6 +287,60 @@
             overflow: hidden;
         }
 
+        .turn-order {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+
+        .turn-token {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            z-index: 3;
+            animation: turnTokenPulse 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        @keyframes turnTokenPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            }
+        }
+
+        .current-player .turn-order {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #000;
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
         .player-container::before {
             content: '';
             position: absolute;
@@ -268,14 +363,20 @@
         }
 
         .current-player {
-            border: 2px solid #ffd700;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            animation: currentPlayerGlow 2s ease-in-out infinite alternate;
         }
 
-        @keyframes glow {
-            from { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-            to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); }
+        @keyframes currentPlayerGlow {
+            from { 
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+                border-color: #ffd700;
+            }
+            to { 
+                box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+                border-color: #ffed4e;
+            }
         }
 
         .player-name {
@@ -943,6 +1044,13 @@
             margin: 24px 0;
         }
 
+        #hostControls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
         .lobby-status {
             margin-top: 16px;
             padding: 12px;
@@ -969,6 +1077,171 @@
             color: rgba(255, 255, 255, 0.6);
             font-style: italic;
             padding: 24px;
+        }
+
+        /* Card Action Menu Styles */
+        .card-action-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .action-menu-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .action-menu-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            animation: menuSlideIn 0.3s ease-out;
+        }
+
+        @keyframes menuSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .action-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-menu-header h3 {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-menu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .selected-card-display {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-button {
+            position: relative;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .action-button.primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .action-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+        }
+
+        .action-button.secondary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .action-button.secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(245, 158, 11, 0.4);
+        }
+
+        .action-button.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-button.cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .action-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .interactable-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .interactable-card:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            border-color: #10b981;
         }
 
         /* Mobile optimizations */
@@ -1016,7 +1289,7 @@
 <body>
     <div class="game-container">
         <!-- Starting Menu -->
-        <div id="startingMenu" class="starting-menu hidden">
+        <div id="startingMenu" class="starting-menu">
             <div class="menu-container">
                 <div class="game-logo">
                     <h1>🃏 EPIC CARD GAME ✨</h1>
@@ -1139,6 +1412,10 @@
                 </svg>
             </div>
             <div class="peer-id" id="peerIdDisplay">Player: <span id="currentPlayerName">Unknown</span></div>
+            <div class="current-turn-display" id="currentTurnDisplay">
+                <span class="turn-label">Current Turn:</span>
+                <span class="turn-player" id="currentTurnPlayer">-</span>
+            </div>
         </div>
 
         <!-- Main View -->
@@ -1221,6 +1498,36 @@
             </div>
             <div class="card-detail" id="cardDetail"></div>
         </div>
+
+        <!-- Card Action Menu -->
+        <div id="cardActionMenu" class="card-action-menu hidden">
+            <div class="action-menu-backdrop" onclick="hideCardActionMenu()"></div>
+            <div class="action-menu-container">
+                <div class="action-menu-header">
+                    <h3 id="actionCardTitle">Card Actions</h3>
+                    <button class="close-menu-btn" onclick="hideCardActionMenu()">✕</button>
+                </div>
+                <div class="action-menu-content">
+                    <div id="selectedCardDisplay" class="selected-card-display">
+                        <!-- Selected card will appear here -->
+                    </div>
+                    <div class="action-buttons">
+                        <button id="moveToPartyBtn" class="action-button primary">
+                            🎉 Move to Party
+                            <span class="action-subtitle">Add this card to your party</span>
+                        </button>
+                        <button id="discardCardBtn" class="action-button secondary">
+                            🗑️ Discard Card
+                            <span class="action-subtitle">Send this card to discard pile</span>
+                        </button>
+                        <button id="cancelActionBtn" class="action-button cancel" onclick="hideCardActionMenu()">
+                            ❌ Cancel
+                            <span class="action-subtitle">Keep card in hand</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1239,6 +1546,7 @@
         let selectedSection = null;
         let selectedCard = null;
         let selectedPlayer = null;
+        let selectedActionCard = null;
         let peer = null;
         let connections = [];
         let connectedPlayers = [];
@@ -1248,7 +1556,90 @@
         let gameCode = '';
         let isHost = false;
 
-        // 4-character code generation
+        // Card action functions
+        function showCardActionMenu(card, isInteractable = false) {
+            if (!isInteractable) {
+                // If not interactable, just show the card detail view
+                showCardView(card, true);
+                return;
+            }
+
+            selectedActionCard = card;
+            
+            // Update menu title and display
+            document.getElementById('actionCardTitle').textContent = `${card.color.charAt(0).toUpperCase() + card.color.slice(1)} ${card.number}`;
+            
+            // Display the selected card
+            const cardDisplay = document.getElementById('selectedCardDisplay');
+            cardDisplay.innerHTML = '';
+            cardDisplay.appendChild(createCardElement(card, true, 'medium'));
+            
+            // Show the menu
+            document.getElementById('cardActionMenu').classList.remove('hidden');
+        }
+
+        function hideCardActionMenu() {
+            document.getElementById('cardActionMenu').classList.add('hidden');
+            selectedActionCard = null;
+        }
+
+        function moveCardToParty() {
+            if (!selectedActionCard) return;
+            
+            // Find current player
+            const currentPlayer = gameState.players.find(p => p.name === playerName);
+            if (!currentPlayer) return;
+            
+            // Find the card in hand
+            const cardIndex = currentPlayer.hand.findIndex(c => c.id === selectedActionCard.id);
+            if (cardIndex === -1) return;
+            
+            // Remove from hand and add to party
+            const card = currentPlayer.hand.splice(cardIndex, 1)[0];
+            currentPlayer.party.push(card);
+            
+            // Update display
+            updateMainView();
+            
+            // Broadcast changes if host
+            if (isHost) {
+                broadcastGameState();
+            }
+            
+            // Hide menu
+            hideCardActionMenu();
+            
+            console.log(`Moved ${card.color} ${card.number} to party`);
+        }
+
+        function discardCard() {
+            if (!selectedActionCard) return;
+            
+            // Find current player
+            const currentPlayer = gameState.players.find(p => p.name === playerName);
+            if (!currentPlayer) return;
+            
+            // Find the card in hand
+            const cardIndex = currentPlayer.hand.findIndex(c => c.id === selectedActionCard.id);
+            if (cardIndex === -1) return;
+            
+            // Remove from hand and add to discard pile
+            const card = currentPlayer.hand.splice(cardIndex, 1)[0];
+            gameState.mainDiscard.push(card);
+            
+            // Update display
+            updateMainView();
+            
+            // Broadcast changes if host
+            if (isHost) {
+                broadcastGameState();
+            }
+            
+            // Hide menu
+            hideCardActionMenu();
+            
+            console.log(`Discarded ${card.color} ${card.number}`);
+        }
         function generate4CharCode() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let result = '';
@@ -1275,10 +1666,10 @@
             gameCode = generate4CharCode();
             isHost = true;
             
-            // Initialize host player
+            // Initialize host player with consistent ID format
             connectedPlayers = [{
                 name: playerName,
-                id: 'host',
+                id: `host-${gameCode}`,
                 isHost: true,
                 status: 'Ready'
             }];
@@ -1391,15 +1782,27 @@
         function addPlayerToLobby(playerData) {
             const existingPlayer = connectedPlayers.find(p => p.id === playerData.id);
             if (!existingPlayer) {
+                // Add new player to the end of the list (preserving order)
                 connectedPlayers.push({
                     name: playerData.name,
                     id: playerData.id,
                     isHost: false,
                     status: 'Connected'
                 });
+                
+                console.log('Players after adding:', connectedPlayers.map(p => `${p.name} (${p.id})`));
                 updateLobbyDisplay();
                 
-                // Broadcast updated player list to all clients
+                // Send current lobby state to the new player
+                const newPlayerConn = connections.find(c => c.peer === playerData.id);
+                if (newPlayerConn && newPlayerConn.open) {
+                    newPlayerConn.send({
+                        type: 'lobbyUpdate',
+                        players: connectedPlayers
+                    });
+                }
+                
+                // Broadcast updated player list to all other clients
                 broadcastToAll({
                     type: 'lobbyUpdate',
                     players: connectedPlayers
@@ -1424,13 +1827,16 @@
                 return;
             }
             
-            // Broadcast game start to all players
+            // Initialize the game state ONCE on the host
+            initializeGame();
+            
+            // Broadcast game start AND initial game state to all players
             broadcastToAll({
                 type: 'gameStart',
-                players: connectedPlayers
+                gameState: gameState  // Include the initialized game state
             });
             
-            // Start the game locally
+            // Start the game locally for host
             startGame();
         }
 
@@ -1451,29 +1857,56 @@
                 peer = null;
             }
             
-            // Show starting menu again
+            // Hide both lobby types and show starting menu again
             document.getElementById('hostLobby').classList.add('hidden');
+            document.getElementById('playerLobby').classList.add('hidden');
             document.getElementById('startingMenu').classList.remove('hidden');
             document.getElementById('statusIndicator').textContent = '⚡ Ready to play';
             document.getElementById('gameCodeDisplay').classList.add('hidden');
         }
 
         function startGame() {
-            // Hide lobby/menu with animation
-            const activeMenu = document.querySelector('.starting-menu:not(.hidden)');
-            if (activeMenu) {
-                activeMenu.classList.add('menu-fade-out');
-                
+            // Hide both lobby types with animation
+            const hostLobby = document.getElementById('hostLobby');
+            const playerLobby = document.getElementById('playerLobby');
+            
+            if (!hostLobby.classList.contains('hidden')) {
+                hostLobby.classList.add('menu-fade-out');
                 setTimeout(() => {
-                    activeMenu.classList.add('hidden');
-                    document.querySelector('.connection-ui').classList.remove('hidden');
-                    document.getElementById('currentPlayerName').textContent = playerName;
-                    
-                    // Initialize the actual game with connected players
-                    initializeGame(connectedPlayers.length);
-                    showView('main');
+                    hostLobby.classList.add('hidden');
+                    showGameInterface();
                 }, 500);
+            } else if (!playerLobby.classList.contains('hidden')) {
+                playerLobby.classList.add('menu-fade-out');
+                setTimeout(() => {
+                    playerLobby.classList.add('hidden');
+                    showGameInterface();
+                }, 500);
+            } else {
+                // Fallback for other menu states
+                const activeMenu = document.querySelector('.starting-menu:not(.hidden)');
+                if (activeMenu) {
+                    activeMenu.classList.add('menu-fade-out');
+                    setTimeout(() => {
+                        activeMenu.classList.add('hidden');
+                        showGameInterface();
+                    }, 500);
+                } else {
+                    showGameInterface();
+                }
             }
+        }
+
+        function showGameInterface() {
+            document.querySelector('.connection-ui').classList.remove('hidden');
+            document.getElementById('currentPlayerName').textContent = playerName;
+            
+            // Ensure we start with the main view
+            currentView = 'main';
+            document.getElementById('mainView').classList.remove('hidden');
+            
+            // Update the display with current game state
+            updateMainView();
         }
         function createMainDeck() {
             const colors = ['red', 'blue', 'green', 'yellow'];
@@ -1533,9 +1966,13 @@
         }
 
         // Card rendering with enhanced animations
-        function createCardElement(card, showFront = true, size = 'small', onClick = null) {
+        function createCardElement(card, showFront = true, size = 'small', onClick = null, isInteractable = false) {
             const cardEl = document.createElement('div');
             cardEl.className = `card card-${size}`;
+            
+            if (isInteractable) {
+                cardEl.classList.add('interactable-card');
+            }
             
             if (!showFront) {
                 cardEl.classList.add('card-back');
@@ -1553,13 +1990,21 @@
                     cardEl.style.transform = 'scale(0.95)';
                     setTimeout(() => {
                         cardEl.style.transform = '';
-                        onClick();
+                        if (isInteractable) {
+                            onClick(card, isInteractable);
+                        } else {
+                            onClick();
+                        }
                     }, 150);
                 });
 
                 // Add hover sound effect simulation
                 cardEl.addEventListener('mouseenter', () => {
-                    cardEl.style.filter = 'brightness(1.1)';
+                    if (isInteractable) {
+                        cardEl.style.filter = 'brightness(1.2)';
+                    } else {
+                        cardEl.style.filter = 'brightness(1.1)';
+                    }
                 });
 
                 cardEl.addEventListener('mouseleave', () => {
@@ -1570,53 +2015,40 @@
             return cardEl;
         }
 
-        // Initialize game
-        function initializeGame(playerCount = 2) {
+        // Initialize game - ONLY called by host
+        function initializeGame() {
             const mainDeck = createMainDeck();
             const partyLeadDeck = createPartyLeadDeck();
             const monsterDeck = createMonsterDeck();
             
             const players = [];
             
-            // Use connected players if available, otherwise create default players
-            if (connectedPlayers.length > 0) {
-                connectedPlayers.forEach((connectedPlayer, i) => {
-                    const hand = [];
-                    for (let j = 0; j < 5; j++) {
-                        if (mainDeck.length > 0) {
-                            hand.push(mainDeck.pop());
-                        }
+            console.log('Host initializing game with connected players:', connectedPlayers.map(p => `${p.name} (${p.id})`));
+            
+            // Create players in the exact order they appear in connectedPlayers
+            connectedPlayers.forEach((connectedPlayer, i) => {
+                const hand = [];
+                for (let j = 0; j < 5; j++) {
+                    if (mainDeck.length > 0) {
+                        hand.push(mainDeck.pop());
                     }
-                    
-                    players.push({
-                        id: connectedPlayer.id,
-                        name: connectedPlayer.name,
-                        hand,
-                        party: [],
-                        partyLeader: partyLeadDeck.pop()
-                    });
-                });
-            } else {
-                // Fallback for single player or testing
-                for (let i = 0; i < playerCount; i++) {
-                    const hand = [];
-                    for (let j = 0; j < 5; j++) {
-                        if (mainDeck.length > 0) {
-                            hand.push(mainDeck.pop());
-                        }
-                    }
-                    
-                    const name = i === 0 ? playerName : `Player ${i + 1}`;
-                    
-                    players.push({
-                        id: `player-${i}`,
-                        name: name,
-                        hand,
-                        party: [],
-                        partyLeader: partyLeadDeck.pop()
-                    });
                 }
-            }
+                
+                const gamePlayer = {
+                    id: connectedPlayer.id,
+                    name: connectedPlayer.name,
+                    hand,
+                    party: [],
+                    partyLeader: partyLeadDeck.pop()
+                };
+                
+                players.push(gamePlayer);
+                console.log(`Added player ${i}: ${gamePlayer.name} (${gamePlayer.id})`);
+            });
+            
+            // Randomize turn order by shuffling the players array
+            const shuffledPlayers = shuffle(players);
+            console.log('Turn order after shuffle:', shuffledPlayers.map((p, i) => `${i + 1}. ${p.name}`));
             
             const attackingMonsters = [
                 monsterDeck.pop(),
@@ -1624,23 +2056,26 @@
                 monsterDeck.pop()
             ].filter(Boolean);
             
-            const firstPlayerIndex = Math.floor(Math.random() * players.length);
+            // First player is now index 0 (since array is shuffled)
+            const firstPlayerIndex = 0;
             
             gameState = {
                 mainDeck,
                 mainDiscard: [],
                 monsterDeck,
                 attackingMonsters,
-                players,
+                players: shuffledPlayers, // Use shuffled array
                 currentPlayerIndex: firstPlayerIndex,
-                currentPlayer: players[firstPlayerIndex]
+                currentPlayer: shuffledPlayers[firstPlayerIndex] // Ensure this matches the index
             };
 
-            updateMainView();
+            console.log('Host: Final game players in turn order:', gameState.players.map((p, i) => `${i + 1}. ${p.name} (${p.id})`));
+            console.log('Host: First player (index 0):', gameState.currentPlayer.name);
+            console.log('Host: Current player index:', gameState.currentPlayerIndex);
             
-            // Broadcast initial game state if host
-            if (isHost) {
-                broadcastGameState();
+            // Validate that currentPlayer matches the index
+            if (gameState.players[gameState.currentPlayerIndex].name !== gameState.currentPlayer.name) {
+                console.error('MISMATCH: currentPlayer does not match currentPlayerIndex!');
             }
         }
 
@@ -1725,13 +2160,22 @@
                     
                 case 'lobbyUpdate':
                     // Both host and players receive lobby updates
-                    connectedPlayers = data.players;
+                    console.log('Received lobby update:', data.players.map(p => `${p.name} (${p.id})`));
+                    connectedPlayers = [...data.players]; // Create new array to avoid reference issues
                     updateLobbyDisplay();
                     break;
                     
                 case 'gameStart':
                     if (!isHost) {
-                        connectedPlayers = data.players;
+                        console.log('Non-host received game start with game state');
+                        // Set the game state received from host
+                        gameState = data.gameState;
+                        console.log('Non-host: Received game state with players:', gameState.players.map((p, i) => `${i + 1}. ${p.name} (${p.id})`));
+                        console.log('Non-host: Current player is:', gameState.currentPlayer.name);
+                        console.log('Non-host: Current player index:', gameState.currentPlayerIndex);
+                        console.log('Non-host: My name is:', playerName);
+                        console.log('Non-host: Am I the current player?', gameState.currentPlayer.name === playerName);
+                        
                         const statusText = document.getElementById('playerLobbyStatusText');
                         if (statusText) {
                             statusText.textContent = '🚀 Starting game...';
@@ -1774,7 +2218,13 @@
                 
                 conn.on('close', () => {
                     console.log('Disconnected from host');
-                    alert('Disconnected from game');
+                    // Show different message based on where the player is
+                    const playerLobby = document.getElementById('playerLobby');
+                    if (!playerLobby.classList.contains('hidden')) {
+                        alert('Host left the game');
+                    } else {
+                        alert('Disconnected from game');
+                    }
                     location.reload();
                 });
                 
@@ -1818,16 +2268,22 @@
 
         // Enhanced view management with smooth transitions
         function showView(viewName) {
-            const currentViewElement = document.querySelector('.game-container > div:not(.hidden)');
+            // Hide all game views first
+            const allViews = ['mainView', 'deckView', 'monsterView', 'playerView', 'cardView'];
+            allViews.forEach(viewId => {
+                const viewElement = document.getElementById(viewId);
+                if (viewElement) {
+                    viewElement.classList.add('hidden');
+                }
+            });
+            
+            // Show the target view
             const targetViewElement = document.getElementById(viewName + 'View');
-            
-            if (currentViewElement) {
-                currentViewElement.classList.add('hidden');
+            if (targetViewElement) {
+                setTimeout(() => {
+                    targetViewElement.classList.remove('hidden');
+                }, 100);
             }
-            
-            setTimeout(() => {
-                targetViewElement.classList.remove('hidden');
-            }, 150);
             
             currentView = viewName;
         }
@@ -1854,6 +2310,31 @@
             // Update deck counts with animation
             animateNumber('mainDeckCount', gameState.mainDeck.length);
             animateNumber('discardCount', gameState.mainDiscard.length);
+
+            // Update current turn display with better debugging
+            const currentTurnPlayer = document.getElementById('currentTurnPlayer');
+            if (currentTurnPlayer && gameState.currentPlayer && gameState.players) {
+                // Find the current player using the index to ensure consistency
+                const actualCurrentPlayer = gameState.players[gameState.currentPlayerIndex];
+                
+                // Debug logging
+                console.log(`[${playerName}] Current turn check:`, {
+                    currentPlayerIndex: gameState.currentPlayerIndex,
+                    actualCurrentPlayer: actualCurrentPlayer?.name,
+                    myName: playerName,
+                    isMyTurn: actualCurrentPlayer?.name === playerName
+                });
+                
+                // Check if it's the current user's turn using the indexed player
+                const isMyTurn = actualCurrentPlayer && actualCurrentPlayer.name === playerName;
+                if (isMyTurn) {
+                    currentTurnPlayer.textContent = 'Your Turn!';
+                    currentTurnPlayer.className = 'turn-player my-turn';
+                } else {
+                    currentTurnPlayer.textContent = actualCurrentPlayer ? actualCurrentPlayer.name : 'Unknown';
+                    currentTurnPlayer.className = 'turn-player';
+                }
+            }
 
             // Update main deck card
             const mainDeckContainer = document.getElementById('mainDeckCard');
@@ -1912,14 +2393,39 @@
             playersContainer.innerHTML = '';
 
             gameState.players.forEach((player, index) => {
+                const isCurrentTurn = index === gameState.currentPlayerIndex;
+                const isCurrentUser = player.name === playerName;
+                
+                // Debug logging for player turn status
+                console.log(`[${playerName}] Player ${player.name} (index ${index}):`, {
+                    isCurrentTurn,
+                    isCurrentUser,
+                    currentPlayerIndex: gameState.currentPlayerIndex
+                });
+                
                 const playerEl = document.createElement('div');
-                playerEl.className = `player-container ${index === gameState.currentPlayerIndex ? 'current-player' : ''}`;
+                playerEl.className = `player-container ${isCurrentTurn ? 'current-player' : ''}`;
                 playerEl.addEventListener('click', () => showPlayerView(player));
 
-                const playerName = document.createElement('div');
-                playerName.className = 'player-name';
-                playerName.textContent = player.name;
-                playerEl.appendChild(playerName);
+                // Add turn order indicator
+                const turnOrder = document.createElement('div');
+                turnOrder.className = 'turn-order';
+                turnOrder.textContent = `${index + 1}`;
+                playerEl.appendChild(turnOrder);
+
+                // Add turn token for current player
+                if (isCurrentTurn) {
+                    const turnToken = document.createElement('div');
+                    turnToken.className = 'turn-token';
+                    turnToken.innerHTML = '⭐';
+                    turnToken.title = "Current Turn";
+                    playerEl.appendChild(turnToken);
+                }
+
+                const playerNameEl = document.createElement('div');
+                playerNameEl.className = 'player-name';
+                playerNameEl.textContent = player.name;
+                playerEl.appendChild(playerNameEl);
 
                 const playerCards = document.createElement('div');
                 playerCards.className = 'player-cards';
@@ -1948,13 +2454,25 @@
 
                 playerEl.appendChild(playerCards);
 
-                // Hand cards
+                // Hand cards - show front only if it's the current user's own cards
+                // Make cards interactive ONLY if it's current user AND their turn
                 const handSection = document.createElement('div');
                 handSection.className = 'player-hand';
-                const isCurrentPlayer = index === gameState.currentPlayerIndex;
+                const canInteract = isCurrentUser && isCurrentTurn;
+                
+                console.log(`[${playerName}] ${player.name} can interact:`, canInteract, { isCurrentUser, isCurrentTurn });
+                
                 player.hand.slice(0, 4).forEach(card => {
-                    handSection.appendChild(createCardElement(card, isCurrentPlayer, 'tiny'));
+                    const cardEl = createCardElement(
+                        card, 
+                        isCurrentUser, // Show front if it's current user
+                        'tiny', 
+                        canInteract ? showCardActionMenu : null, // Make interactive if it's their turn
+                        canInteract // Pass interactable flag
+                    );
+                    handSection.appendChild(cardEl);
                 });
+                
                 if (player.hand.length > 4) {
                     const moreCards = document.createElement('div');
                     moreCards.className = 'more-cards';
@@ -2086,9 +2604,30 @@
             handSection.appendChild(handLabel);
             const handCards = document.createElement('div');
             handCards.className = 'hand-cards';
-            const isCurrentPlayer = player.id === gameState.currentPlayer?.id;
+            
+            const isCurrentUser = player.name === playerName;
+            // Check if this is the current user's turn (not the viewed player's turn)
+            const isMyTurn = gameState.currentPlayerIndex < gameState.players.length && 
+                            gameState.players[gameState.currentPlayerIndex].name === playerName;
+            const canInteract = isCurrentUser && isMyTurn;
+            
+            console.log(`Player view for ${player.name}:`, {
+                isCurrentUser,
+                isMyTurn,
+                canInteract,
+                currentPlayerName: gameState.players[gameState.currentPlayerIndex]?.name,
+                myName: playerName
+            });
+            
             player.hand.forEach(card => {
-                handCards.appendChild(createCardElement(card, isCurrentPlayer, 'small', () => showCardView(card, isCurrentPlayer)));
+                const cardEl = createCardElement(
+                    card, 
+                    isCurrentUser, 
+                    'small', 
+                    canInteract ? showCardActionMenu : (() => showCardView(card, isCurrentUser)),
+                    canInteract
+                );
+                handCards.appendChild(cardEl);
             });
             handSection.appendChild(handCards);
             nearView.appendChild(handSection);
@@ -2169,6 +2708,10 @@
         document.getElementById('startGameButton').addEventListener('click', startGameFromLobby);
         document.getElementById('cancelLobbyButton').addEventListener('click', cancelLobby);
         
+        // Card action menu event listeners
+        document.getElementById('moveToPartyBtn').addEventListener('click', moveCardToParty);
+        document.getElementById('discardCardBtn').addEventListener('click', discardCard);
+        
         // Enter key support for inputs
         document.getElementById('playerName').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -2187,13 +2730,15 @@
             e.target.value = e.target.value.toUpperCase();
         });
 
-        // Initialize - show starting menu
-        window.addEventListener('load', () => {
-            // Game starts with the menu visible
-            setTimeout(() => {
-                document.getElementById('startingMenu').classList.remove('hidden');
-            }, 100);
+        // Close action menu with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('cardActionMenu').classList.contains('hidden')) {
+                hideCardActionMenu();
+            }
         });
+
+        // Initialize - starting menu is visible by default
+        // No additional initialization needed
     </script>
 </body>
 </html>
